@@ -1,0 +1,52 @@
+name: Release
+
+# Publishing happens when a version tag is pushed:
+#
+#   npm version patch && git push --follow-tags
+#
+# There is no NPM_TOKEN. npm trusted publishing exchanges this workflow's OIDC
+# identity for a short-lived, single-use credential, so there is no long-lived
+# secret in this repository to leak. Configure the trusted publisher once at
+# npmjs.com -> the package -> Settings -> Trusted Publisher, naming this
+# repository and this workflow file.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Trusted publishing needs a recent npm; the one bundled with the runner
+      # is not always new enough.
+      - run: npm install -g npm@latest
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+
+      # Refuse to publish a tag that disagrees with package.json, which is the
+      # usual way a release goes out under the wrong version.
+      - name: Check the tag matches the manifest
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PKG="$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "$PKG" ]; then
+            echo "tag v$TAG does not match package.json $PKG" >&2
+            exit 1
+          fi
+
+      - run: npm publish --access public
