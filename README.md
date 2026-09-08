@@ -6,7 +6,6 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/blastradius"><img alt="npm" src="https://img.shields.io/npm/v/blastradius.svg"></a>
   <a href="https://github.com/furkanyesildag/blastradius/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/furkanyesildag/blastradius/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <img alt="no network" src="https://img.shields.io/badge/network-none-brightgreen">
@@ -66,18 +65,21 @@ Nobody typed the task. It was read out of the agent's own session log.
 
 ## Install
 
+Not on npm yet, so install it straight from the repository. It builds itself on
+install; nothing else is needed.
+
 ```bash
-npx blastradius
+npm install -g github:furkanyesildag/blastradius
+```
+
+Then, in any git repository:
+
+```bash
+blastradius
 ```
 
 That is the whole setup. No config file, no API key, no account. It reads your
 git diff and your agent's transcript, both of which are already on your disk.
-
-To keep it around:
-
-```bash
-npm install -g blastradius
-```
 
 ## How it decides
 
@@ -213,7 +215,8 @@ with `-t` when there is no Claude Code transcript to read.
 Review an agent-authored pull request against its own description:
 
 ```yaml
-- run: npx blastradius --base ${{ github.base_ref }} -t "${{ github.event.pull_request.title }}" --fail-on critical
+- run: npm install -g github:furkanyesildag/blastradius
+- run: blastradius --base ${{ github.base_ref }} -t "${{ github.event.pull_request.title }}" --fail-on critical
 ```
 
 Exit codes: `0` clean, `1` threshold exceeded, `2` usage or git error.
