@@ -1,0 +1,6 @@
+# A pattern-matching tool cannot be run over its own patterns: these three
+# files contain skip markers, type-ignore comments and key-shaped strings as
+# *data*, describing what the rules catch rather than doing it.
+tests/*.test.mjs
+src/rules.ts
+README.md

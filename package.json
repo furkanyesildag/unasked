@@ -1,0 +1,50 @@
+{
+  "name": "blastradius",
+  "version": "0.1.0",
+  "description": "Your agent was asked to fix a typo. It touched 14 files. Blast Radius tells you which changes were out of scope — before you commit.",
+  "keywords": [
+    "ai",
+    "agent",
+    "claude-code",
+    "cursor",
+    "codex",
+    "code-review",
+    "diff",
+    "scope",
+    "git",
+    "guardrail"
+  ],
+  "homepage": "https://github.com/furkanyesildag/blastradius#readme",
+  "bugs": "https://github.com/furkanyesildag/blastradius/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/furkanyesildag/blastradius.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "blastradius": "dist/cli.js",
+    "br": "dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/chmod-bin.mjs",
+    "prepublishOnly": "npm run build",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2"
+  }
+}

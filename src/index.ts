@@ -1,0 +1,11 @@
+export { analyze, type AnalyzeOptions } from './analyze.js';
+export { collectChanges, repoRoot, type DiffSelector } from './git.js';
+export { parseUnifiedDiff } from './diff.js';
+export { extractTerms, findAnchors, fileStem } from './anchors.js';
+export { assignVerdicts } from './scope.js';
+export { ALL_RULES, runRules, isTestFile } from './rules.js';
+export { resolveTask, inferFromClaudeCode } from './task.js';
+export { IgnoreList, isSuppressed, INLINE_MARKER } from './ignore.js';
+export { renderReport, renderSummary } from './report.js';
+export { hookMessage, readHookInput, hookSettingsFragment } from './hook.js';
+export type * from './types.js';

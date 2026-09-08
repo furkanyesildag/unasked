@@ -1,0 +1,6 @@
+src/
+tests/
+scripts/
+docs/
+.github/
+tsconfig.json
