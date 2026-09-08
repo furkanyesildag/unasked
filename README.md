@@ -6,9 +6,10 @@
 </p>
 
 <p align="center">
+  <a href="https://www.npmjs.com/package/blastradius-guard"><img alt="npm" src="https://img.shields.io/npm/v/blastradius-guard.svg"></a>
   <a href="https://github.com/furkanyesildag/blastradius/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/furkanyesildag/blastradius/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-  <img alt="no network" src="https://img.shields.io/badge/network-none-brightgreen">
+  <img alt="no network at runtime" src="https://img.shields.io/badge/network%20at%20runtime-none-brightgreen">
   <img alt="no model calls" src="https://img.shields.io/badge/model%20calls-0-brightgreen">
 </p>
 
@@ -65,23 +66,22 @@ Nobody typed the task. It was read out of the agent's own session log.
 
 ## Install
 
-Not on npm yet. Three lines, and the only dependency is a TypeScript compiler
-that is fetched, used, and never shipped:
-
 ```bash
-git clone https://github.com/furkanyesildag/blastradius.git
-cd blastradius && npm install     # builds on install
-npm link                          # puts `blastradius` on your PATH
-```
-
-Then, in any git repository:
-
-```bash
-blastradius
+npx blastradius-guard
 ```
 
 That is the whole setup. No config file, no API key, no account. It reads your
-git diff and your agent's transcript, both of which are already on your disk.
+git diff and your agent's transcript, both of which are already on your disk,
+and it never talks to the network once installed.
+
+To keep it around:
+
+```bash
+npm install -g blastradius-guard
+```
+
+The package is `blastradius-guard` because npm will not hand out `blastradius`;
+the command it installs is `blastradius`, and `br` for short.
 
 ## How it decides
 
@@ -217,10 +217,7 @@ with `-t` when there is no Claude Code transcript to read.
 Review an agent-authored pull request against its own description:
 
 ```yaml
-- run: |
-    git clone --depth 1 https://github.com/furkanyesildag/blastradius.git /tmp/br
-    npm --prefix /tmp/br install
-- run: node /tmp/br/dist/cli.js --base ${{ github.base_ref }} -t "${{ github.event.pull_request.title }}" --fail-on critical
+- run: npx blastradius-guard --base ${{ github.base_ref }} -t "${{ github.event.pull_request.title }}" --fail-on critical
 ```
 
 Exit codes: `0` clean, `1` threshold exceeded, `2` usage or git error.
