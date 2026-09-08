@@ -49,4 +49,15 @@ jobs:
             exit 1
           fi
 
-      - run: npm publish --access public
+      # A tag can be re-pushed, and 0.1.0 went out by hand before this workflow
+      # existed. Publishing an already-published version is an error, so treat
+      # "already there" as success rather than a failed release.
+      - name: Publish if this version is new
+        run: |
+          NAME="$(node -p "require('./package.json').name")"
+          VERSION="$(node -p "require('./package.json').version")"
+          if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
+            echo "$NAME@$VERSION is already on npm; nothing to publish."
+          else
+            npm publish --access public
+          fi
