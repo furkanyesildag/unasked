@@ -67,7 +67,7 @@ export function renderReport(report: Report, opts: RenderOptions = {}): string {
   const { totals, task } = report;
 
   out.push('');
-  out.push(bold('  blast radius'));
+  out.push(bold('  unasked'));
   out.push('');
 
   if (task.source === 'none' || !task.text) {
@@ -156,8 +156,8 @@ export function renderReport(report: Report, opts: RenderOptions = {}): string {
 
   out.push('');
   if (totals.outOfScope > 0) {
-    out.push(`  ${dim('review just the surprises:')} ${bold('blastradius diff --out-of-scope')}`);
-    out.push(`  ${dim('put them back:')}            ${bold('blastradius revert --out-of-scope')}`);
+    out.push(`  ${dim('review just the surprises:')} ${bold('unasked diff --out-of-scope')}`);
+    out.push(`  ${dim('put them back:')}            ${bold('unasked revert --out-of-scope')}`);
     out.push('');
   }
 

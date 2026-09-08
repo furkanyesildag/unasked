@@ -1,13 +1,13 @@
-<h1 align="center">Blast Radius</h1>
+<h1 align="center">unasked</h1>
 
 <p align="center">
   <strong>Your agent was asked to fix a typo. It touched 14 files.</strong><br>
-  Blast Radius tells you which of those changes were out of scope — before you commit.
+  <code>unasked</code> tells you which of those changes were out of scope — before you commit.
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/blastradius-guard"><img alt="npm" src="https://img.shields.io/npm/v/blastradius-guard.svg"></a>
-  <a href="https://github.com/furkanyesildag/blastradius/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/furkanyesildag/blastradius/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://www.npmjs.com/package/unasked"><img alt="npm" src="https://img.shields.io/npm/v/unasked.svg"></a>
+  <a href="https://github.com/furkanyesildag/unasked/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/furkanyesildag/unasked/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <img alt="no network at runtime" src="https://img.shields.io/badge/network%20at%20runtime-none-brightgreen">
   <img alt="no model calls" src="https://img.shields.io/badge/model%20calls-0-brightgreen">
@@ -22,13 +22,13 @@ also: a retry layer nobody asked for, `axios` added to `package.json`, a
 You will not read all of it. You will skim it, approve it, and find out in three
 weeks.
 
-Blast Radius reads the same diff and tells you which parts have nothing to do
+`unasked` reads the same diff and tells you which parts have nothing to do
 with what you asked for.
 
 ```
-$ blastradius
+$ unasked
 
-  blast radius
+  unasked
 
   task (from Claude Code session 8754a19e)
   "fix the typo on the login button in src/auth/LoginButton.tsx"
@@ -58,8 +58,8 @@ $ blastradius
   6 files +27 -9   2 in scope · 4 out of scope
   2 critical · 4 warnings · 1 note
 
-  review just the surprises: blastradius diff --out-of-scope
-  put them back:            blastradius revert --out-of-scope
+  review just the surprises: unasked diff --out-of-scope
+  put them back:            unasked revert --out-of-scope
 ```
 
 Nobody typed the task. It was read out of the agent's own session log.
@@ -67,7 +67,7 @@ Nobody typed the task. It was read out of the agent's own session log.
 ## Install
 
 ```bash
-npx blastradius-guard
+npx unasked
 ```
 
 That is the whole setup. No config file, no API key, no account. It reads your
@@ -77,11 +77,9 @@ and it never talks to the network once installed.
 To keep it around:
 
 ```bash
-npm install -g blastradius-guard
+npm install -g unasked
 ```
 
-The package is `blastradius-guard` because npm will not hand out `blastradius`;
-the command it installs is `blastradius`, and `br` for short.
 
 ## How it decides
 
@@ -117,7 +115,7 @@ would rather say "I don't know" than guess.
 
 ## Rules
 
-`blastradius rules` prints this list. Turn any of them off with
+`unasked rules` prints this list. Turn any of them off with
 `--disable dependency-added,version-bumped`.
 
 ### Critical
@@ -161,10 +159,10 @@ file. Two escape hatches, both standard:
 Mark the line:
 
 ```ts
-console.log(banner); // blastradius-ok
+console.log(banner); // unasked-ok
 ```
 
-Or exclude paths in `.blastradiusignore`, which reads like `.gitignore`:
+Or exclude paths in `.unaskedignore`, which reads like `.gitignore`:
 
 ```gitignore
 # fixtures that contain the patterns the rules look for
@@ -181,16 +179,16 @@ To turn a rule off everywhere, `--disable dependency-added,version-bumped`.
 ## Wire it into Claude Code
 
 ```bash
-blastradius install-hook          # this repo
-blastradius install-hook --global # everywhere
+unasked install-hook          # this repo
+unasked install-hook --global # everywhere
 ```
 
-That adds a `Stop` hook. When the agent finishes a turn, Blast Radius reviews
+That adds a `Stop` hook. When the agent finishes a turn, `unasked` reviews
 what it just did and hands the findings back **to the agent**, which then has to
 justify or undo them before you ever see the diff:
 
 ```
-Blast Radius review of your changes:
+unasked review of your changes:
 
 4 file(s) you changed are not related to the stated task:
   - src/api/client.ts (+14/-2)
@@ -217,7 +215,7 @@ with `-t` when there is no Claude Code transcript to read.
 Review an agent-authored pull request against its own description:
 
 ```yaml
-- run: npx blastradius-guard --base ${{ github.base_ref }} -t "${{ github.event.pull_request.title }}" --fail-on critical
+- run: npx unasked --base ${{ github.base_ref }} -t "${{ github.event.pull_request.title }}" --fail-on critical
 ```
 
 Exit codes: `0` clean, `1` threshold exceeded, `2` usage or git error.
@@ -226,12 +224,12 @@ Exit codes: `0` clean, `1` threshold exceeded, `2` usage or git error.
 ## Commands
 
 ```
-blastradius [check]        review the working tree (default)
-blastradius diff           show the diff for the flagged files only
-blastradius revert         restore files the task never asked for
-blastradius hook           Claude Code hook adapter
-blastradius install-hook   wire the hook into settings.json
-blastradius rules          list the rule families
+unasked [check]        review the working tree (default)
+unasked diff           show the diff for the flagged files only
+unasked revert         restore files the task never asked for
+unasked hook           Claude Code hook adapter
+unasked install-hook   wire the hook into settings.json
+unasked rules          list the rule families
 
   -t, --task "..."   state the task instead of inferring it
       --staged       only what is staged
@@ -272,11 +270,11 @@ Worth knowing before you install it.
 ## Prior art
 
 [ponytail](https://github.com/DietrichGebert/ponytail) tells the agent to write
-less code before it starts. Blast Radius checks what it actually wrote after it
+less code before it starts. `unasked` checks what it actually wrote after it
 stops. They compose; the prompt-level fix and the diff-level check catch
 different things.
 
-`git diff --stat` tells you how much changed. Blast Radius tells you how much of
+`git diff --stat` tells you how much changed. `unasked` tells you how much of
 it you asked for.
 
 ## Contributing

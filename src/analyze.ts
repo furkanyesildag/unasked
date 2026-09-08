@@ -12,7 +12,7 @@ export interface AnalyzeOptions {
   disabledRules?: Set<string>;
   /** Skip reading working-tree files for import edges. */
   noImportGraph?: boolean;
-  /** Defaults to `.blastradiusignore` at the repository root. */
+  /** Defaults to `.unaskedignore` at the repository root. */
   ignore?: IgnoreList;
 }
 

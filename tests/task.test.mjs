@@ -11,7 +11,7 @@ import { cleanup, makeRepo, verdictOf, withHome, write } from './helpers.mjs';
  * at it, so the inference path can be exercised without touching the real one.
  */
 function withTranscript(repoPath, entries, fn) {
-  const home = mkdtempSync(join(tmpdir(), 'blastradius-home-'));
+  const home = mkdtempSync(join(tmpdir(), 'unasked-home-'));
   // Same substitution on every platform: a Windows path carries backslashes
   // and a drive colon, and none of them may survive into a directory name.
   const slug = repoPath.replace(/[\\/:]/g, '-');
@@ -105,7 +105,7 @@ test('the transcript is found even when the directory name does not match', asyn
 
   // A project directory whose name follows no convention we know: the only way
   // to find it is by reading the `cwd` the session recorded.
-  const home = mkdtempSync(join(tmpdir(), 'blastradius-home-'));
+  const home = mkdtempSync(join(tmpdir(), 'unasked-home-'));
   const projects = join(home, '.claude', 'projects', 'not-a-slug-at-all');
   mkdirSync(projects, { recursive: true });
   writeFileSync(

@@ -115,7 +115,7 @@ test('debug-left ignores test files and honours the opt-out comment', () => {
     {
       'a.ts': "console.log('here');\nrun();\n",
       'a.test.ts': "console.log('here');\nrun();\n",
-      'b.ts': "console.log('kept'); // blastradius-ok\nrun();\n",
+      'b.ts': "console.log('kept'); // unasked-ok\nrun();\n",
     },
   );
   const hits = flagsFor(r, 'debug-left');

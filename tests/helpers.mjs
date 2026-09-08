@@ -9,7 +9,7 @@ export function git(cwd, ...args) {
 
 /** A throwaway git repository seeded with `files`, all committed. */
 export function makeRepo(files) {
-  const dir = mkdtempSync(join(tmpdir(), 'blastradius-test-'));
+  const dir = mkdtempSync(join(tmpdir(), 'unasked-test-'));
   git(dir, 'init', '-q', '.');
   git(dir, 'config', 'user.email', 'test@example.com');
   git(dir, 'config', 'user.name', 'test');

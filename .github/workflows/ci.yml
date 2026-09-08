@@ -33,6 +33,6 @@ jobs:
           node-version: '22.x'
       - run: npm ci
       - run: npm run build
-      # Blast Radius reviews its own pull requests.
+      # Unasked reviews its own pull requests.
       - if: github.event_name == 'pull_request'
         run: node dist/cli.js --base ${{ github.base_ref }} -t "${{ github.event.pull_request.title }}" --fail-on critical

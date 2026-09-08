@@ -8,18 +8,18 @@ import { join } from 'node:path';
  * wrong about the intent — a fixture that contains `it.skip(` as data, a
  * `console.log` that is the whole point of the file.
  */
-export const INLINE_MARKER = 'blastradius-ok';
+export const INLINE_MARKER = 'unasked-ok';
 
 export function isSuppressed(line: string): boolean {
   return line.includes(INLINE_MARKER);
 }
 
 /**
- * A `.blastradiusignore` file, in the same shape as `.gitignore`: one glob per
+ * A `.unaskedignore` file, in the same shape as `.gitignore`: one glob per
  * line, `#` comments, `!` to re-include. Matched files are skipped entirely —
  * no verdict, no rules.
  */
-export const IGNORE_FILE = '.blastradiusignore';
+export const IGNORE_FILE = '.unaskedignore';
 
 export class IgnoreList {
   private readonly rules: Array<{ re: RegExp; negated: boolean }> = [];

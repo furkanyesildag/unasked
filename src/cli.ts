@@ -12,9 +12,9 @@ import { resolveTask } from './task.js';
 import type { DiffSelector } from './git.js';
 import type { Report, Verdict } from './types.js';
 
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
 
-// `blastradius | head` closes the pipe early; that is a normal way to use a
+// `unasked | head` closes the pipe early; that is a normal way to use a
 // CLI, not a crash.
 for (const stream of [process.stdout, process.stderr]) {
   stream.on('error', (err: NodeJS.ErrnoException) => {
@@ -100,7 +100,7 @@ function parseArgs(argv: string[]): Args {
         break;
       default:
         if (a.startsWith('-')) {
-          process.stderr.write(`blastradius: unknown option ${a}\n`);
+          process.stderr.write(`unasked: unknown option ${a}\n`);
           process.exit(2);
         }
         rest.push(a);
@@ -110,23 +110,23 @@ function parseArgs(argv: string[]): Args {
   const first = rest[0];
   if (first && COMMANDS.has(first)) args.command = first;
   else if (first) {
-    process.stderr.write(`blastradius: unknown command "${first}"\n`);
+    process.stderr.write(`unasked: unknown command "${first}"\n`);
     process.exit(2);
   }
   return args;
 }
 
-const HELP = `blastradius ${VERSION}
+const HELP = `unasked ${VERSION}
 Your agent was asked to fix a typo. It touched 14 files.
-Blast Radius tells you which changes were out of scope.
+Unasked tells you which changes were out of scope.
 
 USAGE
-  blastradius [check] [options]     review the working tree (default)
-  blastradius diff   [options]      show the diff for the flagged files only
-  blastradius revert [options]      restore files the task never asked for
-  blastradius hook                  Claude Code hook adapter (reads stdin)
-  blastradius install-hook          wire the hook into settings.json
-  blastradius rules                 list the rule families
+  unasked [check] [options]     review the working tree (default)
+  unasked diff   [options]      show the diff for the flagged files only
+  unasked revert [options]      restore files the task never asked for
+  unasked hook                  Claude Code hook adapter (reads stdin)
+  unasked install-hook          wire the hook into settings.json
+  unasked rules                 list the rule families
 
 WHAT TO REVIEW
   -t, --task "..."      state the task instead of inferring it
@@ -197,7 +197,7 @@ function resolveRepo(): string {
   try {
     return repoRoot(process.cwd());
   } catch {
-    process.stderr.write('blastradius: not a git repository.\n');
+    process.stderr.write('unasked: not a git repository.\n');
     process.exit(2);
   }
 }
@@ -240,7 +240,7 @@ function runDiff(args: Args): void {
     .map((f) => f.file.path);
 
   if (paths.length === 0) {
-    process.stdout.write('blastradius: nothing flagged.\n');
+    process.stdout.write('unasked: nothing flagged.\n');
     return;
   }
 
@@ -262,7 +262,7 @@ function runDiff(args: Args): void {
 function runRevert(args: Args): void {
   const repo = resolveRepo();
   if (args.range || args.base) {
-    process.stderr.write('blastradius: revert only operates on the working tree.\n');
+    process.stderr.write('unasked: revert only operates on the working tree.\n');
     process.exit(2);
   }
 
@@ -272,9 +272,9 @@ function runRevert(args: Args): void {
   // away the work the agent was actually asked to do. Refuse instead.
   if (report.anchors.length === 0) {
     process.stderr.write(
-      'blastradius: the task does not name any of the changed files, so every change\n' +
+      'unasked: the task does not name any of the changed files, so every change\n' +
         'looks unscoped and reverting would discard the real work too.\n' +
-        'State the task explicitly first:  blastradius revert -t "..." --out-of-scope\n',
+        'State the task explicitly first:  unasked revert -t "..." --out-of-scope\n',
     );
     process.exit(2);
   }
@@ -283,7 +283,7 @@ function runRevert(args: Args): void {
   const targets = report.files.filter((f) => want.has(f.verdict));
 
   if (targets.length === 0) {
-    process.stdout.write('blastradius: nothing to revert.\n');
+    process.stdout.write('unasked: nothing to revert.\n');
     return;
   }
 
@@ -358,7 +358,7 @@ function installHook(args: Args): void {
     try {
       settings = JSON.parse(readFileSync(settingsPath, 'utf8')) as Record<string, unknown>;
     } catch {
-      process.stderr.write(`blastradius: ${settingsPath} is not valid JSON; leaving it alone.\n`);
+      process.stderr.write(`unasked: ${settingsPath} is not valid JSON; leaving it alone.\n`);
       process.exit(1);
     }
   }
@@ -367,9 +367,9 @@ function installHook(args: Args): void {
   const hooks = (settings.hooks ?? {}) as Record<string, unknown[]>;
   const stop = Array.isArray(hooks.Stop) ? hooks.Stop : [];
 
-  const already = JSON.stringify(stop).includes('blastradius hook');
+  const already = JSON.stringify(stop).includes('unasked hook');
   if (already) {
-    process.stdout.write(`blastradius: hook already installed in ${settingsPath}\n`);
+    process.stdout.write(`unasked: hook already installed in ${settingsPath}\n`);
     return;
   }
 
@@ -378,7 +378,7 @@ function installHook(args: Args): void {
 
   mkdirSync(dirname(settingsPath), { recursive: true });
   writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n');
-  process.stdout.write(`blastradius: installed Stop hook in ${settingsPath}\n`);
+  process.stdout.write(`unasked: installed Stop hook in ${settingsPath}\n`);
 }
 
 function listRules(): void {
@@ -396,7 +396,7 @@ try {
   main();
 } catch (err) {
   if (err instanceof GitError) {
-    process.stderr.write(`blastradius: ${err.message}\n`);
+    process.stderr.write(`unasked: ${err.message}\n`);
     process.exit(2);
   }
   throw err;

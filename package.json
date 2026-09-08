@@ -1,7 +1,7 @@
 {
-  "name": "blastradius-guard",
-  "version": "0.1.1",
-  "description": "Your agent was asked to fix a typo. It touched 14 files. Blast Radius tells you which changes were out of scope — before you commit.",
+  "name": "unasked",
+  "version": "0.2.0",
+  "description": "Your agent was asked to fix a typo. It touched 14 files. Unasked tells you which changes were out of scope — before you commit.",
   "keywords": [
     "ai",
     "agent",
@@ -14,17 +14,16 @@
     "git",
     "guardrail"
   ],
-  "homepage": "https://github.com/furkanyesildag/blastradius#readme",
-  "bugs": "https://github.com/furkanyesildag/blastradius/issues",
+  "homepage": "https://github.com/furkanyesildag/unasked#readme",
+  "bugs": "https://github.com/furkanyesildag/unasked/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/furkanyesildag/blastradius.git"
+    "url": "git+https://github.com/furkanyesildag/unasked.git"
   },
   "license": "MIT",
   "type": "module",
   "bin": {
-    "blastradius": "dist/cli.js",
-    "br": "dist/cli.js"
+    "unasked": "dist/cli.js"
   },
   "exports": {
     ".": "./dist/index.js"

@@ -28,12 +28,12 @@ test('an empty list ignores nothing but the ignore file itself', () => {
   const list = new IgnoreList([]);
   assert.equal(list.empty, true);
   assert.equal(list.ignores('anything.ts'), false);
-  assert.equal(list.ignores('.blastradiusignore'), true);
+  assert.equal(list.ignores('.unaskedignore'), true);
 });
 
-test('.blastradiusignore removes a file from the review entirely', () => {
+test('.unaskedignore removes a file from the review entirely', () => {
   const dir = makeRepo({ 'src/a.ts': 'a\n', 'fixtures/b.ts': 'a\n' });
-  writeFileSync(join(dir, '.blastradiusignore'), 'fixtures/\n');
+  writeFileSync(join(dir, '.unaskedignore'), 'fixtures/\n');
   write(dir, { 'src/a.ts': "console.log('x');\n", 'fixtures/b.ts': "console.log('x');\n" });
 
   const r = analyze({ repoPath: dir, task: { text: 'update src/a.ts', source: 'explicit' } });
@@ -46,8 +46,8 @@ test('.blastradiusignore removes a file from the review entirely', () => {
 test('the inline marker suppresses any rule, not just one', () => {
   const dir = makeRepo({ 'a.ts': 'x\n', 'b.test.ts': 'x\n' });
   write(dir, {
-    'a.ts': "console.log('kept'); // blastradius-ok\n",
-    'b.test.ts': "it.skip('known flake'); // blastradius-ok\n",
+    'a.ts': "console.log('kept'); // unasked-ok\n",
+    'b.test.ts': "it.skip('known flake'); // unasked-ok\n",
   });
 
   const r = analyze({ repoPath: dir, task: { text: '', source: 'explicit' } });
@@ -59,7 +59,7 @@ test('the inline marker suppresses any rule, not just one', () => {
 
 test('the marker suppresses only the line it is on', () => {
   const dir = makeRepo({ 'a.ts': 'x\n' });
-  write(dir, { 'a.ts': "console.log('kept'); // blastradius-ok\nconsole.log('flagged');\n" });
+  write(dir, { 'a.ts': "console.log('kept'); // unasked-ok\nconsole.log('flagged');\n" });
 
   const r = analyze({ repoPath: dir, task: { text: '', source: 'explicit' } });
   cleanup(dir);

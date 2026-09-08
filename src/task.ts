@@ -62,7 +62,7 @@ function textOf(content: unknown): string | null {
 
 /**
  * Recover the most recent human-typed prompt for this repository from the
- * agent's own session log. This is what makes `blastradius` zero-config: the
+ * agent's own session log. This is what makes `unasked` zero-config: the
  * task is already on disk, nobody should have to retype it.
  */
 export function inferFromClaudeCode(repoPath: string, maxAgeHours = 24): Task | null {

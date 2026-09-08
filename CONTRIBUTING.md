@@ -37,7 +37,7 @@ trains people to ignore the output. When in doubt, ship it as `info`.
 {
   id: 'my-rule',
   severity: 'warn',
-  describe: 'One line, shown by `blastradius rules`.',
+  describe: 'One line, shown by `unasked rules`.',
   check(file, ctx) {
     // ctx.anchors  — files the task named; usually stay quiet about these
     // ctx.isTestFile(path)
@@ -67,7 +67,7 @@ will talk about it.
 The most useful bug report is a wrong `OUT OF SCOPE`. Include the output of:
 
 ```bash
-blastradius --why --all -t "the task you gave"
+unasked --why --all -t "the task you gave"
 ```
 
 The `--why` lines say which rung of the ladder the file fell off, which is

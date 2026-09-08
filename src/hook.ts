@@ -48,7 +48,7 @@ export function hookMessage(report: Report): string | null {
 
   if (outOfScope.length === 0 && critical.length === 0) return null;
 
-  const lines: string[] = ['Blast Radius review of your changes:'];
+  const lines: string[] = ['Unasked review of your changes:'];
 
   if (outOfScope.length > 0) {
     lines.push('');
@@ -73,14 +73,14 @@ export function hookMessage(report: Report): string | null {
   return lines.join('\n');
 }
 
-/** The settings.json fragment `blastradius install-hook` writes. */
+/** The settings.json fragment `unasked install-hook` writes. */
 export function hookSettingsFragment(): Record<string, unknown> {
   return {
     hooks: {
       Stop: [
         {
           matcher: '',
-          hooks: [{ type: 'command', command: 'blastradius hook', timeout: 30 }],
+          hooks: [{ type: 'command', command: 'unasked hook', timeout: 30 }],
         },
       ],
     },
