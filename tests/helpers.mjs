@@ -40,3 +40,23 @@ export function flagsFor(report, rule) {
 export function verdictOf(report, path) {
   return report.files.find((f) => f.file.path === path)?.verdict;
 }
+
+/**
+ * Run `fn` with the home directory pointed somewhere disposable.
+ *
+ * `os.homedir()` reads HOME on POSIX and USERPROFILE on Windows, so both have
+ * to move or the test silently reads the real transcript directory.
+ */
+export function withHome(home, fn) {
+  const saved = { HOME: process.env.HOME, USERPROFILE: process.env.USERPROFILE };
+  process.env.HOME = home;
+  process.env.USERPROFILE = home;
+  try {
+    return fn();
+  } finally {
+    for (const [k, v] of Object.entries(saved)) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
+  }
+}

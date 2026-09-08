@@ -4,7 +4,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { analyze } from '../dist/analyze.js';
-import { cleanup, makeRepo, verdictOf, write } from './helpers.mjs';
+import { cleanup, makeRepo, verdictOf, withHome, write } from './helpers.mjs';
 
 /**
  * Build a fake Claude Code transcript directory for `repoPath` and point HOME
@@ -12,18 +12,16 @@ import { cleanup, makeRepo, verdictOf, write } from './helpers.mjs';
  */
 function withTranscript(repoPath, entries, fn) {
   const home = mkdtempSync(join(tmpdir(), 'blastradius-home-'));
-  const slug = repoPath.replace(/\//g, '-');
+  // Same substitution on every platform: a Windows path carries backslashes
+  // and a drive colon, and none of them may survive into a directory name.
+  const slug = repoPath.replace(/[\\/:]/g, '-');
   const dir = join(home, '.claude', 'projects', slug);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'session-abc.jsonl'), entries.map((e) => JSON.stringify(e)).join('\n') + '\n');
 
-  const realHome = process.env.HOME;
-  process.env.HOME = home;
   try {
-    return fn();
+    return withHome(home, fn);
   } finally {
-    if (realHome === undefined) delete process.env.HOME;
-    else process.env.HOME = realHome;
     rmSync(home, { recursive: true, force: true });
   }
 }
@@ -98,4 +96,31 @@ test('an explicit task always wins over inference', async () => {
 
   assert.equal(task.source, 'explicit');
   assert.equal(task.text, 'my explicit task');
+});
+
+test('the transcript is found even when the directory name does not match', async () => {
+  const dir = makeRepo({ 'src/login.ts': 'a\n' });
+  write(dir, { 'src/login.ts': 'b\n' });
+  const { resolveTask } = await import('../dist/task.js');
+
+  // A project directory whose name follows no convention we know: the only way
+  // to find it is by reading the `cwd` the session recorded.
+  const home = mkdtempSync(join(tmpdir(), 'blastradius-home-'));
+  const projects = join(home, '.claude', 'projects', 'not-a-slug-at-all');
+  mkdirSync(projects, { recursive: true });
+  writeFileSync(
+    join(projects, 'session-xyz.jsonl'),
+    JSON.stringify(userTurn(dir, 'fix the label in src/login.ts')) + '\n',
+  );
+
+  let task;
+  try {
+    task = withHome(home, () => resolveTask({ repoPath: dir }));
+  } finally {
+    rmSync(home, { recursive: true, force: true });
+    cleanup(dir);
+  }
+
+  assert.equal(task.source, 'claude-code');
+  assert.match(task.text, /src\/login\.ts/);
 });
