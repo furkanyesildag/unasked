@@ -65,11 +65,13 @@ Nobody typed the task. It was read out of the agent's own session log.
 
 ## Install
 
-Not on npm yet, so install it straight from the repository. It builds itself on
-install; nothing else is needed.
+Not on npm yet. Three lines, and the only dependency is a TypeScript compiler
+that is fetched, used, and never shipped:
 
 ```bash
-npm install -g github:furkanyesildag/blastradius
+git clone https://github.com/furkanyesildag/blastradius.git
+cd blastradius && npm install     # builds on install
+npm link                          # puts `blastradius` on your PATH
 ```
 
 Then, in any git repository:
@@ -215,8 +217,10 @@ with `-t` when there is no Claude Code transcript to read.
 Review an agent-authored pull request against its own description:
 
 ```yaml
-- run: npm install -g github:furkanyesildag/blastradius
-- run: blastradius --base ${{ github.base_ref }} -t "${{ github.event.pull_request.title }}" --fail-on critical
+- run: |
+    git clone --depth 1 https://github.com/furkanyesildag/blastradius.git /tmp/br
+    npm --prefix /tmp/br install
+- run: node /tmp/br/dist/cli.js --base ${{ github.base_ref }} -t "${{ github.event.pull_request.title }}" --fail-on critical
 ```
 
 Exit codes: `0` clean, `1` threshold exceeded, `2` usage or git error.
