@@ -58,6 +58,28 @@ jobs:
           VERSION="$(node -p "require('./package.json').version")"
           if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
             echo "$NAME@$VERSION is already on npm; nothing to publish."
-          else
-            npm publish --access public
+            exit 0
           fi
+
+          if npm publish --access public; then
+            exit 0
+          fi
+
+          # The usual cause is a trusted publisher that was never configured:
+          # npm then rejects the anonymous PUT with a bare 404, which says
+          # nothing about what is actually missing.
+          cat >&2 <<'MSG'
+
+          Publish failed. If the error above is a 404 on the PUT, this
+          repository is not yet registered as a trusted publisher, so the
+          workflow had no credential to publish with.
+
+          Fix it once, at npmjs.com -> the package -> Settings ->
+          Trusted Publisher:
+
+            Repository: furkanyesildag/unasked
+            Workflow:   release.yml
+
+          Then re-run this job. Nothing needs to be committed.
+          MSG
+          exit 1
