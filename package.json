@@ -40,7 +40,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json && node scripts/chmod-bin.mjs",
     "prepublishOnly": "npm run build",
-    "test": "npm run build && node --test tests/*.test.mjs",
+    "test": "npm run build && node --test",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
